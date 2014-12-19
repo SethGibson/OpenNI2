@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ColorDSAPIStream.cpp" />
+    <ClCompile Include="DepthDSAPIStream.cpp" />
+    <ClCompile Include="IRDSAPIStream.cpp" />
+    <ClCompile Include="DSAPIDevice.cpp" />
+    <ClCompile Include="DSAPIDriver.cpp" />
+    <ClCompile Include="BaseDSAPIStream.cpp" />
+    <ClCompile Include="DSAPIStreamImpl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D2S.h.h" />
+    <ClInclude Include="S2D.h.h" />
+    <ClInclude Include="ColorDSAPIStream.h" />
+    <ClInclude Include="DepthDSAPIStream.h" />
+    <ClInclude Include="IRDSAPIStream.h" />
+    <ClInclude Include="DSAPIDevice.h" />
+    <ClInclude Include="DSAPIDriver.h" />
+    <ClInclude Include="BaseDSAPIStream.h" />
+    <ClInclude Include="DSAPIStreamImpl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{aede41a2-2b14-4dfc-abfa-2561ae67c9f5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Resources\OpenNI.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
