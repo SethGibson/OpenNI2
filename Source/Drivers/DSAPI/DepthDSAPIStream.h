@@ -18,21 +18,24 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#ifndef DEPTHKINECTSTREAM_H
-#define DEPTHKINECTSTREAM_H
+#ifndef DEPTHDSAPISTREAM_H
+#define DEPTHDSAPISTREAM_H
 
-#include "BaseKinectStream.h"
+#include "BaseDSAPIStream.h"
 #include "XnArray.h"
 
-struct INuiSensor;
-namespace kinect_device {
+//struct INuiSensor;
+struct IDSAPISensor;
 
-class DepthKinectStream : public BaseKinectStream
+namespace dsapi_device {
+
+class DepthDSAPIStream : public BaseDSAPIStream
 {
 public:
-	DepthKinectStream(KinectStreamImpl* pStreamImpl);
+	DepthDSAPIStream(DSAPIStreamImpl* pStreamImpl);
 
-	virtual void frameReceived(NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	//virtual void frameReceived(NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	virtual void frameReceived(uint16_t *imageFrame);
 
 	virtual OniStatus convertDepthToColorCoordinates(StreamBase* colorStream, int depthX, int depthY, OniDepthPixel depthZ, int* pColorX, int* pColorY);
 	
@@ -48,8 +51,8 @@ private:
 	xnl::Array<int> m_mappedCoordsBuffer;
 
 	void populateFrameImageMetadata(OniFrame* pFrame, int dataUnitSize);
-	void copyDepthPixelsStraight(const NUI_DEPTH_IMAGE_PIXEL* source, int numPoints, OniFrame* pFrame);
-	void copyDepthPixelsWithImageRegistration(const NUI_DEPTH_IMAGE_PIXEL* source, int numPoints, OniFrame* pFrame);
+	void copyDepthPixelsStraight(const uint16_t* source, int numPoints, OniFrame* pFrame);
+	void copyDepthPixelsWithImageRegistration(const uint16_t* source, int numPoints, OniFrame* pFrame);
 
 	OniStatus setNearMode(OniBool value);
 	OniStatus getNearMode(OniBool* pValue);

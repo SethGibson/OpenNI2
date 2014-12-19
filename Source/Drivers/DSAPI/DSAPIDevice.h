@@ -18,24 +18,26 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#ifndef KINECTDEVICE_H
-#define KINECTDEVICE_H
+#ifndef DSAPIDEVICE_H
+#define DSAPIDEVICE_H
 
 #include "Driver\OniDriverAPI.h"
-#include "KinectStreamImpl.h"
+#include "DSAPIStreamImpl.h"
 #include "XnLib.h"
 #include "XnHash.h"
 #include "XnEvent.h"
 
-struct 	INuiSensor;
+//struct 	INuiSensor;
+//struct IDSAPISensor;
+class DSAPI;
 
-namespace kinect_device {
+namespace dsapi_device {
 
-class KinectDevice : public oni::driver::DeviceBase 
+class DSAPIDevice : public oni::driver::DeviceBase 
 {
 public:
-	KinectDevice(INuiSensor * pNuiSensor);
-	virtual ~KinectDevice();
+	DSAPIDevice(DSAPI *pDSAPISensor);
+	virtual ~DSAPIDevice();
 
 	virtual OniStatus getSensorInfoList(OniSensorInfo** pSensors, int* numSources);
 
@@ -51,9 +53,9 @@ public:
 	virtual OniBool isImageRegistrationModeSupported(OniImageRegistrationMode mode);
 
 private:
-	INuiSensor * m_pNuiSensor;
-	KinectStreamImpl* m_pDepthStream;
-	KinectStreamImpl* m_pColorStream;
+	DSAPI *m_pDSAPISensor;
+	DSAPIStreamImpl* m_pDepthStream;
+	DSAPIStreamImpl* m_pColorStream;
 	int m_numSensors;
 	OniSensorInfo m_sensors[10];	
 };

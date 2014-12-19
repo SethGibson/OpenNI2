@@ -18,33 +18,35 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#ifndef BASEKINECTSTREAM_H
-#define BASEKINECTSTREAM_H
+#ifndef BASEDSAPISTREAM_H
+#define BASEDSAPISTREAM_H
 
 #include "Driver\OniDriverAPI.h"
 #include "XnLib.h"
 #include <Shlobj.h>
-#include "NuiApi.h"
+#include "DSAPI.h"
 
-namespace kinect_device {
+namespace dsapi_device {
 
-class KinectStreamImpl;
+class DSAPIStreamImpl;
+// Depth Resolutions
+static const int DSAPI_RESOLUTION_X_480 = 480;
+static const int DSAPI_RESOLUTION_Y_360 = 360;
+static const int DSAPI_RESOLUTION_X_628 = 628;
+static const int DSAPI_RESOLUTION_Y_468 = 468;
 
-static const int KINECT_RESOLUTION_X_80 = 80;
-static const int KINECT_RESOLUTION_Y_60 = 60;
-static const int KINECT_RESOLUTION_X_320 = 320;
-static const int KINECT_RESOLUTION_Y_240 = 240;
-static const int KINECT_RESOLUTION_X_640 = 640;
-static const int KINECT_RESOLUTION_Y_480 = 480;
-static const int KINECT_RESOLUTION_X_1280 = 1280;
-static const int KINECT_RESOLUTION_Y_960 = 960;
+// Color Resolutions
+static const int DSAPI_RESOLUTION_X_640 = 640;
+static const int DSAPI_RESOLUTION_Y_480 = 480;
+static const int DSAPI_RESOLUTION_X_1920 = 1920;
+static const int DSAPI_RESOLUTION_Y_1080 = 1080;
 
-class BaseKinectStream : public oni::driver::StreamBase
+class BaseDSAPIStream : public oni::driver::StreamBase
 {
 public:
-	BaseKinectStream(KinectStreamImpl* pStreamImpl);
+	BaseDSAPIStream(DSAPIStreamImpl* pStreamImpl);
 
-	virtual ~BaseKinectStream();
+	virtual ~BaseDSAPIStream();
 
 	virtual OniStatus start();
 
@@ -66,11 +68,12 @@ public:
 	
 	bool isRunning() { return m_running; }
 
-	virtual void frameReceived(NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect) = 0;
+	//virtual void frameReceived(NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect) = 0;
+	virtual void frameReceived(void* imageFrame) = 0;
 	
 	
 protected:
-	KinectStreamImpl *m_pStreamImpl;
+	DSAPIStreamImpl *m_pStreamImpl;
 	OniVideoMode m_videoMode;
 	OniCropping m_cropping;
 	OniBool m_mirroring;

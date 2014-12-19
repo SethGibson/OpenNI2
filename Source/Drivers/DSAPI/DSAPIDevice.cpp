@@ -18,58 +18,48 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#include "KinectDevice.h"
-#include "KinectProperties.h"
-#include "DepthKinectStream.h"
-#include "ColorKinectStream.h"
-#include "IRKinectStream.h"
+#include "DSAPIDevice.h"
+//#include "KinectProperties.h"
+#include "DepthDSAPIStream.h"
+#include "ColorDSAPIStream.h"
+#include "IRDSAPIStream.h"
 #include <Shlobj.h>
-#include "NuiApi.h"
+#include "DSAPI.h"
 
-using namespace kinect_device;
+using namespace dsapi_device;
 using namespace oni::driver;
 #define DEFAULT_FPS 30
-KinectDevice::KinectDevice(INuiSensor * pNuiSensor):m_pDepthStream(NULL), m_pColorStream(NULL),m_pNuiSensor(pNuiSensor)
+DSAPIDevice::DSAPIDevice(DSAPI *pDSAPISensor):m_pDepthStream(NULL), m_pColorStream(NULL),m_pDSAPISensor(pDSAPISensor)
 {
 	m_numSensors = 3;
 
-	m_sensors[0].pSupportedVideoModes = XN_NEW_ARR(OniVideoMode, 3);
+	m_sensors[0].pSupportedVideoModes = XN_NEW_ARR(OniVideoMode, 2);
 	m_sensors[0].sensorType = ONI_SENSOR_DEPTH;
-	m_sensors[0].numSupportedVideoModes = 3;
+	m_sensors[0].numSupportedVideoModes = 2;
 	m_sensors[0].pSupportedVideoModes[0].pixelFormat = ONI_PIXEL_FORMAT_DEPTH_1_MM;
 	m_sensors[0].pSupportedVideoModes[0].fps = DEFAULT_FPS;
-	m_sensors[0].pSupportedVideoModes[0].resolutionX = 640;
-	m_sensors[0].pSupportedVideoModes[0].resolutionY = 480;
+	m_sensors[0].pSupportedVideoModes[0].resolutionX = 480;
+	m_sensors[0].pSupportedVideoModes[0].resolutionY = 360;
 
 	m_sensors[0].pSupportedVideoModes[1].pixelFormat = ONI_PIXEL_FORMAT_DEPTH_1_MM;
 	m_sensors[0].pSupportedVideoModes[1].fps = DEFAULT_FPS;
-	m_sensors[0].pSupportedVideoModes[1].resolutionX = 320;
-	m_sensors[0].pSupportedVideoModes[1].resolutionY = 240;
+	m_sensors[0].pSupportedVideoModes[1].resolutionX = 628;
+	m_sensors[0].pSupportedVideoModes[1].resolutionY = 468;
 
-	m_sensors[0].pSupportedVideoModes[2].pixelFormat = ONI_PIXEL_FORMAT_DEPTH_1_MM;
-	m_sensors[0].pSupportedVideoModes[2].fps = DEFAULT_FPS;
-	m_sensors[0].pSupportedVideoModes[2].resolutionX = 80;
-	m_sensors[0].pSupportedVideoModes[2].resolutionY = 60;
-
-	m_sensors[1].pSupportedVideoModes = XN_NEW_ARR(OniVideoMode, 3);
+	m_sensors[1].pSupportedVideoModes = XN_NEW_ARR(OniVideoMode, 2);
 	m_sensors[1].sensorType = ONI_SENSOR_COLOR;
-	m_sensors[1].numSupportedVideoModes = 3;
+	m_sensors[1].numSupportedVideoModes = 2;
 	m_sensors[1].pSupportedVideoModes[0].pixelFormat = ONI_PIXEL_FORMAT_RGB888;
-	m_sensors[1].pSupportedVideoModes[0].fps         = 12;
-	m_sensors[1].pSupportedVideoModes[0].resolutionX = 1280;
-	m_sensors[1].pSupportedVideoModes[0].resolutionY = 960;
+	m_sensors[1].pSupportedVideoModes[0].fps         = DEFAULT_FPS;
+	m_sensors[1].pSupportedVideoModes[0].resolutionX = 640;
+	m_sensors[1].pSupportedVideoModes[0].resolutionY = 480;
 
 	m_sensors[1].pSupportedVideoModes[1].pixelFormat = ONI_PIXEL_FORMAT_RGB888;
 	m_sensors[1].pSupportedVideoModes[1].fps = DEFAULT_FPS;
-	m_sensors[1].pSupportedVideoModes[1].resolutionX = 640;
-	m_sensors[1].pSupportedVideoModes[1].resolutionY = 480;
+	m_sensors[1].pSupportedVideoModes[1].resolutionX = 1920;
+	m_sensors[1].pSupportedVideoModes[1].resolutionY = 1080;
 
-	m_sensors[1].pSupportedVideoModes[2].pixelFormat = ONI_PIXEL_FORMAT_YUV422;
-	m_sensors[1].pSupportedVideoModes[2].fps         = 15;
-	m_sensors[1].pSupportedVideoModes[2].resolutionX = 640;
-	m_sensors[1].pSupportedVideoModes[2].resolutionY = 480;
-
-	m_sensors[2].pSupportedVideoModes = XN_NEW_ARR(OniVideoMode, 3);
+	m_sensors[2].pSupportedVideoModes = XN_NEW_ARR(OniVideoMode, 2);
 	m_sensors[2].sensorType = ONI_SENSOR_IR;
 	m_sensors[2].numSupportedVideoModes = 3;
 	m_sensors[2].pSupportedVideoModes[0].pixelFormat = ONI_PIXEL_FORMAT_RGB888;
@@ -88,10 +78,10 @@ KinectDevice::KinectDevice(INuiSensor * pNuiSensor):m_pDepthStream(NULL), m_pCol
 	m_sensors[2].pSupportedVideoModes[2].resolutionY = 480;	
 }
 
-KinectDevice::~KinectDevice()
+DSAPIDevice::~DSAPIDevice()
 {
-	if (m_pNuiSensor)
-		m_pNuiSensor->NuiShutdown();
+	if (m_pDSAPISensor)
+		m_pDSAPISensor->stopCapture();
 	
 	if (m_pDepthStream != NULL)
 		XN_DELETE(m_pDepthStream);
@@ -99,18 +89,18 @@ KinectDevice::~KinectDevice()
 	if (m_pColorStream!= NULL)
 		XN_DELETE(m_pColorStream);
 	
-	if (m_pNuiSensor)
-		m_pNuiSensor->Release();
+	if (m_pDSAPISensor)
+		m_pDSAPISensor->Release();
 }
 
-OniStatus KinectDevice::getSensorInfoList(OniSensorInfo** pSensors, int* numSensors)
+OniStatus DSAPIDevice::getSensorInfoList(OniSensorInfo** pSensors, int* numSensors)
 {
 	*numSensors = m_numSensors;
 	*pSensors = m_sensors;
 	return ONI_STATUS_OK;
 }
 
-StreamBase* KinectDevice::createStream(OniSensorType sensorType)
+StreamBase* DSAPIDevice::createStream(OniSensorType sensorType)
 {
 	BaseKinectStream* pImage = NULL;
 	
@@ -143,12 +133,12 @@ StreamBase* KinectDevice::createStream(OniSensorType sensorType)
 	return pImage;
 }
 
-void kinect_device::KinectDevice::destroyStream(oni::driver::StreamBase* pStream)
+void kinect_device::DSAPIDevice::destroyStream(oni::driver::StreamBase* pStream)
 {
 	XN_DELETE(pStream);
 }
 
-OniStatus KinectDevice::setProperty(int propertyId, const void* data, int dataSize)
+OniStatus DSAPIDevice::setProperty(int propertyId, const void* data, int dataSize)
 {
 	switch (propertyId) {
 	case ONI_DEVICE_PROPERTY_IMAGE_REGISTRATION:
@@ -180,7 +170,7 @@ OniStatus KinectDevice::setProperty(int propertyId, const void* data, int dataSi
 	return ONI_STATUS_NOT_IMPLEMENTED;
 }
 
-OniStatus KinectDevice::getProperty(int propertyId, void* data, int* pDataSize)
+OniStatus DSAPIDevice::getProperty(int propertyId, void* data, int* pDataSize)
 {
 	switch (propertyId) {
 	case ONI_DEVICE_PROPERTY_IMAGE_REGISTRATION:
@@ -249,7 +239,7 @@ OniStatus KinectDevice::getProperty(int propertyId, void* data, int* pDataSize)
 	return ONI_STATUS_NOT_IMPLEMENTED;
 }
 
-OniBool KinectDevice::isPropertySupported(int propertyId)
+OniBool DSAPIDevice::isPropertySupported(int propertyId)
 {
 	switch (propertyId)
 	{
@@ -263,17 +253,17 @@ OniBool KinectDevice::isPropertySupported(int propertyId)
 	return false;
 }
 
-OniBool KinectDevice::isCommandSupported(int commandId)
+OniBool DSAPIDevice::isCommandSupported(int commandId)
 {
 	return ONI_STATUS_NOT_IMPLEMENTED;
 }
 
-OniStatus KinectDevice::tryManualTrigger()
+OniStatus DSAPIDevice::tryManualTrigger()
 {
 	return ONI_STATUS_NOT_IMPLEMENTED;
 }
 
-OniBool KinectDevice::isImageRegistrationModeSupported(OniImageRegistrationMode mode)
+OniBool DSAPIDevice::isImageRegistrationModeSupported(OniImageRegistrationMode mode)
 {
 	return (mode == ONI_IMAGE_REGISTRATION_DEPTH_TO_COLOR || mode == ONI_IMAGE_REGISTRATION_OFF);
 }

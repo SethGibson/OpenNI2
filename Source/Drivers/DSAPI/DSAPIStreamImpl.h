@@ -18,28 +18,29 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#ifndef KINECTSTREAMIMPL_H
-#define KINECTSTREAMIMPL_H
+#ifndef DSAPI_STREAMIMPL_H
+#define DSAPI_STREAMIMPL_H
 
-#include "BaseKinectStream.h"
+#include "BaseDSAPIStream.h"
 #include <Shlobj.h>
-#include "NuiApi.h"
+#include "DSAPI.h"
 #include "XnList.h"
 #include "XnArray.h"
 
-struct INuiSensor;
+//struct IDSAPISensor;
+struct IDSAPISensor;
 
-namespace kinect_device {
-class KinectStreamImpl
+namespace dsapi_device {
+class DSAPIStreamImpl
 {
 public:
-	KinectStreamImpl(INuiSensor * pNuiSensor, OniSensorType sensorType);
+	DSAPIStreamImpl(IDSAPISensor * pDSAPISensor, OniSensorType sensorType);
 	
-	virtual ~KinectStreamImpl();
+	virtual ~DSAPIStreamImpl();
 	
-	void addStream(BaseKinectStream* stream);
+	void addStream(BaseDSAPIStream* stream);
 	
-	void removeStream(BaseKinectStream* stream);	
+	void removeStream(BaseDSAPIStream* stream);	
 
 	unsigned int getStreamCount();
 
@@ -72,8 +73,12 @@ public:
 	OniStatus convertDepthToColorCoordinates(oni::driver::StreamBase* colorStream, 
 								int depthX, int depthY, OniDepthPixel depthZ, int* pColorX, int* pColorY);
 
+	/*
 	OniStatus convertDepthFrameToColorCoordinates(const OniVideoMode& colorVideoMode,
 								const NUI_DEPTH_IMAGE_PIXEL* depthPixels, int numPoints, int* colorXYs);
+	*/
+	OniStatus convertDepthFrameToColorCoordinates(const OniVideoMode& colorVideoMode,
+		const uint16_t* depthPixels, int numPoints, int* colorXYs);
 
 	DWORD getImageFrameFlags();
 
@@ -87,22 +92,23 @@ private:
 		
 	void setDefaultVideoMode();
 	
-	NUI_IMAGE_TYPE getNuiImageType();
+	//NUI_IMAGE_TYPE getNuiImageType();
+	DSPixelFormat getDSPixelFormat();
 
 	OniStatus pushImageFrameFlags();
 
 	static XN_THREAD_PROC threadFunc(XN_THREAD_PARAM pThreadParam);
 
-	static NUI_IMAGE_RESOLUTION getNuiImageResolution(int resolutionX, int resolutionY);
-	
-	xnl::List<BaseKinectStream*> m_streamList;
+	//static NUI_IMAGE_RESOLUTION getNuiImageResolution(int resolutionX, int resolutionY);
+
+	xnl::List<BaseDSAPIStream*> m_streamList;
 
 	OniImageRegistrationMode m_imageRegistrationMode;
 
 	DWORD m_imageFrameFlags;
 
 	// Thread
-	INuiSensor* m_pNuiSensor;
+	IDSAPISensor* m_pNuiSensor;
 	OniSensorType m_sensorType;
 	bool		 m_running;
 	HANDLE       m_hStreamHandle;
@@ -115,11 +121,11 @@ private:
 	class DepthToImageCoordsConverter
 	{
 	public:
-		DepthToImageCoordsConverter(INuiSensor* pNuiSensor);
-		OniStatus convert(const OniVideoMode& depthVideoMode, const OniVideoMode& colorVideoMode, const NUI_DEPTH_IMAGE_PIXEL* depthPixels, int numPoints, int* colorXYs);
+		DepthToImageCoordsConverter(IDSAPISensor* pNuiSensor);
+		OniStatus convert(const OniVideoMode& depthVideoMode, const OniVideoMode& colorVideoMode, const uint16_t* depthPixels, int numPoints, int* colorXYs);
 
 	private:
-		INuiSensor* m_pNuiSensor;
+		IDSAPISensor* m_pNuiSensor;
 		xnl::Array<USHORT> m_depthValuesBuffer; // temporary buffer for depth values shifted by 3 bits
 	} m_depthToImageCoordsConverter;
 };

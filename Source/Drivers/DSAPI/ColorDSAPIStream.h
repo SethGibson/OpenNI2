@@ -18,23 +18,25 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#ifndef COLORKINECTSTREAM_H
-#define COLORKINECTSTREAM_H
+#ifndef COLORDSAPISTREAM_H
+#define COLORDSAPISTREAM_H
 
-#include "BaseKinectStream.h"
+#include "BaseDSAPIStream.h"
 
-struct INuiSensor;
-namespace kinect_device {
+//struct INuiSensor;
+struct IDSAPISensor;
+namespace dsapi_device
+{
 
-
-class ColorKinectStream : public BaseKinectStream
+class ColorDSAPIStream : public BaseDSAPIStream
 {
 public:
-	ColorKinectStream(KinectStreamImpl* pStreamImpl);
+	ColorDSAPIStream(DSAPIStreamImpl* pStreamImpl);
 	
 	virtual OniStatus start();
 
-	virtual void frameReceived(NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	//virtual void frameReceived(NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	virtual void frameReceived(uint8_t *imageFrame);
 
 	virtual OniStatus getProperty(int propertyId, void* data, int* pDataSize);
 
@@ -43,8 +45,10 @@ public:
 	virtual OniBool isPropertySupported(int propertyId);
 
 private:
-	void copyFrameRGB888(OniFrame* pFrame, NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
-	void copyFrameYUV422(OniFrame* pFrame, NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	//void copyFrameRGB888(OniFrame* pFrame, NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	//void copyFrameYUV422(OniFrame* pFrame, NUI_IMAGE_FRAME& imageFrame, NUI_LOCKED_RECT &LockedRect);
+	void copyFrameRGB8888(OniFrame* pFrame, uint8_t *imageFrame);
+
 };
 } // namespace kinect_device
 

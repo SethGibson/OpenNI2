@@ -18,25 +18,25 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#ifndef KINECTDRIVER_H
-#define KINECTDRIVER_H
+#ifndef DSAPIDRIVER_H
+#define DSAPIDRIVER_H
 
 #include "Driver\OniDriverAPI.h"
 #include "XnHash.h"
 #include <Shlobj.h>
-#include "NuiApi.h"
+#include "DSApi.h"
 
-namespace kinect_device {
+namespace dsapi_device {
 
-class KinectDriver : public oni::driver::DriverBase 
+class DSAPIDriver : public oni::driver::DriverBase 
 {
 public:
-	KinectDriver(OniDriverServices* pDriverServices);
+	DSAPIDriver(OniDriverServices* pDriverServices);
 	
 	virtual OniStatus initialize(oni::driver::DeviceConnectedCallback connectedCallback, oni::driver::DeviceDisconnectedCallback disconnectedCallback, 
 												oni::driver::DeviceStateChangedCallback deviceStateChangedCallback, void* pCookie);
 
-	virtual ~KinectDriver();
+	virtual ~DSAPIDriver();
 
 	virtual oni::driver::DeviceBase* deviceOpen(const char* uri, const char* mode);
 	virtual void deviceClose(oni::driver::DeviceBase* pDevice);

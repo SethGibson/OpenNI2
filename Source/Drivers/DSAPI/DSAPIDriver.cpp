@@ -18,42 +18,47 @@
 *  limitations under the License.                                            *
 *                                                                            *
 *****************************************************************************/
-#include "KinectDriver.h"
-#include "KinectDevice.h"
+#include "DSAPIDriver.h"
+#include "DSAPIDevice.h"
 #include <Shlobj.h>
-#include "NuiApi.h"
+#include "DSAPI.h"
 #include "XnLog.h"
 
 using namespace oni::driver;
-using namespace kinect_device;
-static const char VENDOR_VAL[] = "Microsoft";
-static const char NAME_VAL[] = "Kinect";
-#define MICROSOFT_VENDOR_ID 0x045e
-#define KINECT_FOR_WINDOWS_PRODUCT_ID 0x02bf
+using namespace dsapi_device;
+static const char VENDOR_VAL[] = "Intel";
+static const char NAME_VAL[] = "DSAPI";
+#define INTEL_VENDOR_ID 0x04b0
+#define DS4_PRODUCT_ID 0x0001
 
-KinectDriver::KinectDriver(OniDriverServices* pDriverServices) : DriverBase(pDriverServices)
+DSAPIDriver::DSAPIDriver(OniDriverServices* pDriverServices) : DriverBase(pDriverServices)
 {
-	NuiSetDeviceStatusCallback( &(KinectDriver::StatusProc), this);
+	//NuiSetDeviceStatusCallback( &(DSAPIDriver::StatusProc), this);
 }
 	
-KinectDriver::~KinectDriver()
+DSAPIDriver::~DSAPIDriver()
 {
-	NuiSetDeviceStatusCallback(NULL, NULL);	
+	//NuiSetDeviceStatusCallback(NULL, NULL);	
 }
 
-OniStatus KinectDriver::initialize(DeviceConnectedCallback connectedCallback, DeviceDisconnectedCallback disconnectedCallback, DeviceStateChangedCallback deviceStateChangedCallback, void* pCookie)
+OniStatus DSAPIDriver::initialize(DeviceConnectedCallback connectedCallback, DeviceDisconnectedCallback disconnectedCallback, DeviceStateChangedCallback deviceStateChangedCallback, void* pCookie)
 {
 	HRESULT hr;
 	int iSensorCount = 0;
-	INuiSensor * pNuiSensor;
+	IDSAPISensor *pDSAPISensor;
 	DriverBase::initialize(connectedCallback, disconnectedCallback, deviceStateChangedCallback, pCookie);
+	
+	// make_shared<DSAPI>
 	hr = NuiGetSensorCount(&iSensorCount);
+	//
 	if (FAILED(hr))
 	{
 		return ONI_STATUS_OK;
 	}
 
 	// Look at each Kinect sensor
+
+	//
 	for (int i = 0; i < iSensorCount; ++i)
 	{
 		// Create the sensor so we can check status, if we can't create it, move on to the next
@@ -83,7 +88,7 @@ OniStatus KinectDriver::initialize(DeviceConnectedCallback connectedCallback, De
 	return ONI_STATUS_OK;
 }
 
-DeviceBase* KinectDriver::deviceOpen(const char* uri, const char* /*mode*/)
+DeviceBase* DSAPIDriver::deviceOpen(const char* uri, const char* /*mode*/)
 {
 	for (xnl::Hash<OniDeviceInfo*, oni::driver::DeviceBase*>::Iterator iter = m_devices.Begin(); iter != m_devices.End(); ++iter)
 	{
@@ -133,7 +138,7 @@ DeviceBase* KinectDriver::deviceOpen(const char* uri, const char* /*mode*/)
 	return NULL;	
 }
 
-void kinect_device::KinectDriver::deviceClose(oni::driver::DeviceBase* pDevice)
+void dsapi_device::DSAPIDriver::deviceClose(oni::driver::DeviceBase* pDevice)
 {
 	for (xnl::Hash<OniDeviceInfo*, oni::driver::DeviceBase*>::Iterator iter = m_devices.Begin(); iter != m_devices.End(); ++iter)
 	{
@@ -149,26 +154,26 @@ void kinect_device::KinectDriver::deviceClose(oni::driver::DeviceBase* pDevice)
 	XN_ASSERT(FALSE);
 }
 
-void KinectDriver::shutdown()
+void DSAPIDriver::shutdown()
 {
 }
 
-OniStatus KinectDriver::tryDevice(const char* uri)
+OniStatus DSAPIDriver::tryDevice(const char* uri)
 {
 	return ONI_STATUS_OK;	
 }
 
-void* KinectDriver::enableFrameSync(StreamBase** pStreams, int streamCount)
+void* DSAPIDriver::enableFrameSync(StreamBase** pStreams, int streamCount)
 {
 	return NULL;
 }
 
-void KinectDriver::disableFrameSync(void* frameSyncGroup)
+void DSAPIDriver::disableFrameSync(void* frameSyncGroup)
 {
 
 }
 
-void KinectDriver::StatusUpdate(const OLECHAR* instanceName, bool isConnected)
+void DSAPIDriver::StatusUpdate(const OLECHAR* instanceName, bool isConnected)
 {
 	char str[ONI_MAX_STR];
 	size_t convertedChars = 0;
@@ -222,17 +227,17 @@ void KinectDriver::StatusUpdate(const OLECHAR* instanceName, bool isConnected)
 		strcpy((char*)pInfo->uri, str);
 		xnOSStrCopy(pInfo->vendor, VENDOR_VAL, ONI_MAX_STR);
 		xnOSStrCopy(pInfo->name, NAME_VAL, ONI_MAX_STR);
-		pInfo->usbVendorId = MICROSOFT_VENDOR_ID;
-		pInfo->usbProductId = KINECT_FOR_WINDOWS_PRODUCT_ID;
+		pInfo->usbVendorId = INTEL_VENDOR_ID;
+		pInfo->usbProductId = DS4_PRODUCT_ID;
 		m_devices[pInfo] = NULL;
 		deviceConnected(pInfo);
 		deviceStateChanged(pInfo, hr);
 	}
 }
 
-void CALLBACK KinectDriver::StatusProc( HRESULT hrStatus, const OLECHAR* instanceName, const OLECHAR* uniqueDeviceName,  void* pUserData )
+void CALLBACK DSAPIDriver::StatusProc( HRESULT hrStatus, const OLECHAR* instanceName, const OLECHAR* uniqueDeviceName,  void* pUserData )
 {      
-	((KinectDriver*)pUserData)->StatusUpdate(instanceName,SUCCEEDED( hrStatus ));
+	((DSAPIDriver*)pUserData)->StatusUpdate(instanceName,SUCCEEDED( hrStatus ));
 }
 
-ONI_EXPORT_DRIVER(kinect_device::KinectDriver)
+ONI_EXPORT_DRIVER(dsapi_device::DSAPIDriver)
