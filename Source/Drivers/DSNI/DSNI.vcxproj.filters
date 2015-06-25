@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ColorDSNIStream.cpp" />
+    <ClCompile Include="DepthDSNIStream.cpp" />
+    <ClCompile Include="IRDSNIStream.cpp" />
+    <ClCompile Include="DSNIDevice.cpp" />
+    <ClCompile Include="DSNIDriver.cpp" />
+    <ClCompile Include="BaseDSNIStream.cpp" />
+    <ClCompile Include="DSNIStreamImpl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseDSNIStream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorDSNIStream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthDSNIStream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="DSNIDevice.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="DSNIDriver.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="DSNIStreamImpl.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="IRDSNIStream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{aede41a2-2b14-4dfc-abfa-2561ae67c9f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{ab782f4e-f89e-4d2a-a2c0-a92679fed7b6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Resources\OpenNI.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

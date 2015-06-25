@@ -93,9 +93,10 @@ openni::Status SampleViewer::init(int argc, char **argv)
 
 		int depthWidth = depthVideoMode.getResolutionX();
 		int depthHeight = depthVideoMode.getResolutionY();
-		int colorWidth = colorVideoMode.getResolutionX();
-		int colorHeight = colorVideoMode.getResolutionY();
+		//int colorWidth = colorVideoMode.getResolutionX();
+		//int colorHeight = colorVideoMode.getResolutionY();
 
+		/*
 		if (depthWidth == colorWidth &&
 			depthHeight == colorHeight)
 		{
@@ -108,7 +109,9 @@ openni::Status SampleViewer::init(int argc, char **argv)
 				depthWidth, depthHeight,
 				colorWidth, colorHeight);
 			return openni::STATUS_ERROR;
-		}
+		}*/
+		m_width = depthWidth;
+		m_height = depthHeight;
 	}
 	else if (m_depthStream.isValid())
 	{
